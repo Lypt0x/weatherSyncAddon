@@ -89,6 +89,8 @@ dependencies {
     compile("org.ow2.asm:asm-commons:6.2") { transitive = false }
     compile("org.spongepowered:mixin:0.8.2") { transitive = false }
     compile("net.minecraft:launchwrapper:1.12") { transitive = false }
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.1'
 }
 
 jar {
@@ -107,4 +109,11 @@ task downloadAPI(type: Download) {
 
     src "https://dl.labymod.net/latest/api/files/lm_api_mc1.16.5.jar"
     dest 'libs/'
+}
+
+test {
+    useJUnitPlatform()
+    useJUnit()
+
+    maxHeapSize = '1G'
 }
