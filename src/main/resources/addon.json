@@ -1,0 +1,6 @@
+{
+  "name": "Example Addon",
+  "uuid": "%uuid%",
+  "mainClass": "dev.lypt0x.weathersync.addon.WeatherSyncAddon",
+  "transformerClass": "dev.lypt0x.weathersync.transformer.WeatherAddonTransformer"
+}

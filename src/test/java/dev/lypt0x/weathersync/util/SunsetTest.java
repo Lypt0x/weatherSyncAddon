@@ -100,4 +100,13 @@ class SunsetTest {
         Assertions.assertEquals(NaN, sunset.calcCustomSunset(0));
     }
 
+    @Test
+    void calcAll() {
+        Sunset sunset = new Sunset(52.517, 13.400, 1);
+        sunset.setCurrentDate(2021, 11, 26);
+
+        System.out.println(sunset.calcOfficialSunrise() % 360);
+        System.out.println(sunset.calcOfficialSunset() % 360);
+    }
+
 }

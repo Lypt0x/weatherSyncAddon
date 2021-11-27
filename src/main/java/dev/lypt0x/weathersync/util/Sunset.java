@@ -1,5 +1,8 @@
 package dev.lypt0x.weathersync.util;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 /**
  * Credits to https://github.com/buelowp/sunset/blob/master/src/sunset.h
  */
@@ -19,6 +22,8 @@ public class Sunset {
     private int month;
     private int day;
 
+    private final ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.systemDefault());
+
     public Sunset() {}
 
     public Sunset(double latitude, double longitude, double timezoneOffset) {
@@ -36,6 +41,31 @@ public class Sunset {
             this.timezoneOffset = timezoneOffset;
         } else
             this.timezoneOffset = 0.0;
+    }
+
+    public void recognizeTimezoneOffset() {
+        this.timezoneOffset = zonedDateTime.getOffset().getTotalSeconds() / 3600.0;
+    }
+
+    public void recognizeDate() {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.systemDefault());
+        this.setCurrentDate(zonedDateTime.getYear(), zonedDateTime.getMonthValue(), zonedDateTime.getDayOfMonth());
+    }
+
+    public double getPercentSunset() {
+        double sunsetHour = this.calcOfficialSunset() / 60.0;
+        double currentHour = zonedDateTime.getHour() + zonedDateTime.getMinute() / 60.0;
+        return (currentHour / sunsetHour);
+    }
+
+    public double getPercentSunrise() {
+        double sunriseHour = this.calcOfficialSunrise() / 60.0;
+        double currentHour = zonedDateTime.getHour() + zonedDateTime.getMinute() / 60.0;
+        return currentHour / sunriseHour;
+    }
+
+    public double getJulianDate() {
+        return julianDate;
     }
 
     public double setCurrentDate(int year, int month, int day) {
@@ -133,7 +163,7 @@ public class Sunset {
         return 357.52911 + julianDate * (35999.05029 - 0.0001537 * julianDate);
     }
 
-    private double calcEquationOfTime(double julianDate) {
+    public double calcEquationOfTime(double julianDate) {
         double epsilon = calcObliquityCorrection(julianDate);
         double l0 = calcGeomMeanLongSun(julianDate);
         double e = calcEccentricityEarthOrbit(julianDate);
@@ -151,7 +181,7 @@ public class Sunset {
         return radiansToDegrees(Etime)*4.0;	// in minutes of time
     }
 
-    private double calcTimeJulianCent(double julianDate) {
+    public double calcTimeJulianCent(double julianDate) {
         return (julianDate - 2451545.0) / 36525.0;
     }
 
@@ -167,7 +197,7 @@ public class Sunset {
         return o - 0.00569 - 0.00478 * Math.sin(degreesToRadians(omega));
     }
 
-    private double calcSunDeclination(double julianDate) {
+    public double calcSunDeclination(double julianDate) {
         double e = calcObliquityCorrection(julianDate);
         double lambda = calcSunApparentLong(julianDate);
 
@@ -182,7 +212,7 @@ public class Sunset {
         return (Math.acos(Math.cos(degreesToRadians(offset))/(Math.cos(latRad)*Math.cos(sdRad))-Math.tan(latRad) * Math.tan(sdRad)));              // in radians
     }
 
-    private double calcHourAngleSunset(double latitude, double solarDec, double offset) {
+    public double calcHourAngleSunset(double latitude, double solarDec, double offset) {
         double latRad = degreesToRadians(latitude);
         double sdRad  = degreesToRadians(solarDec);
         double HA = (Math.acos(Math.cos(degreesToRadians(offset))/(Math.cos(latRad)*Math.cos(sdRad))-Math.tan(latRad) * Math.tan(sdRad)));

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "dev.lypt0x.weathersync.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "verbose": false,
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "PacketMixin"
+  ]
+}
