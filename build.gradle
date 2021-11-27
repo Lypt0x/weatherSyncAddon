@@ -91,6 +91,7 @@ dependencies {
     compile("net.minecraft:launchwrapper:1.12") { transitive = false }
     compile("org.apache.httpcomponents.client5:httpclient5:5.1.2") { transitive = false }
     compile("com.fasterxml.jackson.core:jackson-databind:2.13.0") { transitive = true }
+    compile("net.iakovlev:timeshape:2020d.12") { transitive = true }
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.1'
 }

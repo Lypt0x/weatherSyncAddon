@@ -1,5 +1,6 @@
 package dev.lypt0x.weathersync.listener;
 
+import dev.lypt0x.weathersync.addon.WeatherSyncAddon;
 import net.labymod.api.event.Subscribe;
 import net.labymod.api.event.events.client.renderer.RenderWorldLastEvent;
 import net.minecraft.client.Minecraft;
@@ -9,18 +10,18 @@ public class WorldListener {
 
     @Subscribe
     public void handleWorldLastEvent(RenderWorldLastEvent event) {
+
         /*
-        public void handleTimeUpdate(SUpdateTimePacket packetIn) {
-      PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.client);
-      this.client.world.func_239134_a_(packetIn.getTotalWorldTime());
-      this.client.world.setDayTime(packetIn.getWorldTime());
-   }
+
+        TODO: Get data about settings page
+
+        long time = (long)(12000 * WeatherSyncAddon.getAddon().getSunset().getPercentSunset());
+
+        if (Minecraft.getInstance().world != null) {
+            Minecraft.getInstance().world.setDayTime(-time);
+        }
          */
-        
-        if (Minecraft.getInstance().player == null)
-            return;
-        
-        Minecraft.getInstance().player.worldClient.setDayTime(12000);
+
     }
 
 }

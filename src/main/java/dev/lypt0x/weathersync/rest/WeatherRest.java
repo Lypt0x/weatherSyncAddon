@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParseException;
 import dev.lypt0x.weathersync.entity.WeatherEntity;
+import net.iakovlev.timeshape.TimeZoneEngine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -12,6 +13,8 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.ZoneId;
+import java.util.Optional;
 
 public class WeatherRest {
 
