@@ -2,6 +2,7 @@ package dev.lypt0x.weathersync.addon;
 
 import com.google.gson.JsonObject;
 import dev.lypt0x.weathersync.listener.WorldListener;
+import dev.lypt0x.weathersync.manager.GeoManager;
 import dev.lypt0x.weathersync.manager.SettingsManager;
 import dev.lypt0x.weathersync.rest.WeatherRest;
 import net.iakovlev.timeshape.TimeZoneEngine;
@@ -20,57 +21,46 @@ import java.util.Map;
 public final class WeatherSyncAddon extends LabyModAddon {
 
     private static WeatherSyncAddon addon;
-    private WeatherRest weatherRest;
-    private TimeZoneEngine timeZoneEngine;
-    private SettingsManager settingsManager;
+    private final GeoManager geoManager;
+    private final SettingsManager settingsManager;
 
-    private List<String> countries = Lists.newArrayList();
-
+    public WeatherSyncAddon() {
+        WeatherSyncAddon.addon = this;
+        this.geoManager = new GeoManager(this);
+        this.settingsManager = new SettingsManager();
+    }
 
     @Override
     public void onEnable() {
-        WeatherSyncAddon.addon = this;
-        this.weatherRest = new WeatherRest();
-        this.timeZoneEngine = TimeZoneEngine.initialize();
-        this.settingsManager = new SettingsManager();
+        this.geoManager.loadGeoData();
+
         this.api.getEventService().registerListener(new WorldListener());
-
-        String[] countryCodes = Locale.getISOCountries();
-
-        for (String countryCode : countryCodes){
-            Locale locale = new Locale("", countryCode);
-            String name = locale.getDisplayCountry();
-            countries.add(name);
-        }
-
     }
 
     @Override
     public void loadConfig() {
-
+        this.settingsManager.setEnabled(
+                !this.getConfig().has("enabled") || this.getConfig().get("enabled").getAsBoolean()
+        );
     }
 
     @Override
     protected void fillSettings(List<SettingsElement> list) {
-        DropDownMenu<String> country = new DropDownMenu("Country", 4, 4, 4,4);
-        for(String countries : countries) {
-            country.addOption(countries);
-        }
+        DropDownMenu<String> country = new DropDownMenu<>("Country", 4, 4, 4,4);
+        this.geoManager.getCountries().forEach(country::addOption);
 
-        BooleanElement enabled = new BooleanElement("Enabled", new ControlElement.IconData(Material.LEVER));
-        list.add(enabled);
+        list.add(
+                new BooleanElement(
+                        "Enabled", this, new ControlElement.IconData(Material.LEVER),
+                        "enabled", true
+                )
+        );
+
         list.add(new DropDownElement<>("Country", country));
-
-        this.settingsManager.setEnabled(enabled.getCurrentValue());
-        this.saveConfig();
     }
 
-    public TimeZoneEngine getTimeZoneEngine() {
-        return timeZoneEngine;
-    }
-
-    public WeatherRest getWeatherRest() {
-        return weatherRest;
+    public GeoManager getGeoManager() {
+        return geoManager;
     }
 
     public static WeatherSyncAddon getAddon() {

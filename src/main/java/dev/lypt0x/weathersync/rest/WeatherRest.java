@@ -18,7 +18,11 @@ import java.util.Optional;
 
 public class WeatherRest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper geoObjectMapper;
+
+    public WeatherRest(final ObjectMapper geoObjectMapper) {
+        this.geoObjectMapper = geoObjectMapper;
+    }
 
     public WeatherEntity getWeather(String city) throws IOException {
         // Request to https://wttr.in/{city}?format=j1
@@ -28,7 +32,7 @@ public class WeatherRest {
             HttpGet httpGet = new HttpGet(String.format("https://wttr.in/%s?format=j1", city));
 
             try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                return this.mapper.readValue(response.getEntity().getContent(), WeatherEntity.class);
+                return this.geoObjectMapper.readValue(response.getEntity().getContent(), WeatherEntity.class);
             }
         }
 

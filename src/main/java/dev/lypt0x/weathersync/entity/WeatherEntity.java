@@ -25,7 +25,7 @@ public class WeatherEntity {
         this.sunset = new Sunset();
         this.sunset.recognizeDate();
         this.sunset.recognizeTimezoneOffset();
-        this.zoneId = WeatherSyncAddon.getAddon().getTimeZoneEngine().query(this.sunset.getLatitude(), this.sunset.getLongitude())
+        this.zoneId = WeatherSyncAddon.getAddon().getGeoManager().getTimeZoneEngine().query(this.sunset.getLatitude(), this.sunset.getLongitude())
                 .orElse(ZoneId.systemDefault());
         System.out.println("ZoneId: " + this.zoneId.getRules().getOffset(Instant.now()).getTotalSeconds() / 3600.0);
     }
