@@ -51,7 +51,6 @@ public final class WeatherSyncAddon extends LabyModAddon {
                 )
         );
 
-
         DropDownElement<String> countryElement = new DropDownElement<>("Country", country);
         DropDownElement<String> cityElement = new DropDownElement<>("City", city);
 

@@ -29,5 +29,4 @@ public class SettingsContainer {
     public boolean isEnabled() {
         return enabled;
     }
-
 }
