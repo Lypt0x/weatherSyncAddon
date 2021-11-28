@@ -27,6 +27,7 @@ public class PacketMixin {
             // TODO: Only cancel if the setting is enabled
             callbackInfo.cancel();
         }
+
     }
 
 }
