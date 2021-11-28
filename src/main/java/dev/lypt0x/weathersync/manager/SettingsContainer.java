@@ -1,6 +1,6 @@
 package dev.lypt0x.weathersync.manager;
 
-public class SettingsManager {
+public class SettingsContainer {
 
     private String country = "";
     private String city = "";

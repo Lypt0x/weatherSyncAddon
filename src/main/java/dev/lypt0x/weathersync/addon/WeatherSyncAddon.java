@@ -1,33 +1,26 @@
 package dev.lypt0x.weathersync.addon;
 
-import com.google.gson.JsonObject;
 import dev.lypt0x.weathersync.listener.WorldListener;
 import dev.lypt0x.weathersync.manager.GeoManager;
-import dev.lypt0x.weathersync.manager.SettingsManager;
-import dev.lypt0x.weathersync.rest.WeatherRest;
-import net.iakovlev.timeshape.TimeZoneEngine;
+import dev.lypt0x.weathersync.manager.SettingsContainer;
 import net.labymod.api.LabyModAddon;
 import net.labymod.gui.elements.DropDownMenu;
-import net.labymod.main.LabyMod;
 import net.labymod.settings.elements.*;
+import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
-import org.apache.commons.compress.utils.Lists;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public final class WeatherSyncAddon extends LabyModAddon {
 
     private static WeatherSyncAddon addon;
     private final GeoManager geoManager;
-    private final SettingsManager settingsManager;
+    private final SettingsContainer settingsContainer;
 
     public WeatherSyncAddon() {
         WeatherSyncAddon.addon = this;
         this.geoManager = new GeoManager(this);
-        this.settingsManager = new SettingsManager();
+        this.settingsContainer = new SettingsContainer();
     }
 
     @Override
@@ -39,15 +32,17 @@ public final class WeatherSyncAddon extends LabyModAddon {
 
     @Override
     public void loadConfig() {
-        this.settingsManager.setEnabled(
+        this.settingsContainer.setEnabled(
                 !this.getConfig().has("enabled") || this.getConfig().get("enabled").getAsBoolean()
         );
     }
 
     @Override
     protected void fillSettings(List<SettingsElement> list) {
-        DropDownMenu<String> country = new DropDownMenu<>("Country", 4, 4, 4,4);
+        DropDownMenu<String> country = new DropDownMenu<>("Country", 4, 4, 4, 4);
         this.geoManager.getCountries().forEach(country::addOption);
+
+        DropDownMenu<String> city = new DropDownMenu<>("City", 4, 8, 4, 4);
 
         list.add(
                 new BooleanElement(
@@ -56,7 +51,23 @@ public final class WeatherSyncAddon extends LabyModAddon {
                 )
         );
 
-        list.add(new DropDownElement<>("Country", country));
+
+        DropDownElement<String> countryElement = new DropDownElement<>("Country", country);
+        DropDownElement<String> cityElement = new DropDownElement<>("City", city);
+
+        countryElement.setChangeListener(new Consumer() {
+            @Override
+            public void accept(Object o) {
+                cityElement.getDropDownMenu().clear();
+                String object = (String) o;
+                getGeoManager().getCitiesByCountry((object != null) ? !object.equals("Country") ? object : "Germany" : "Germany")
+                        .forEach(cityElement.getDropDownMenu()::addOption);
+            }
+        });
+
+        list.add(countryElement);
+        list.add(cityElement);
+
     }
 
     public GeoManager getGeoManager() {
