@@ -66,7 +66,6 @@ public final class WeatherSyncAddon extends LabyModAddon {
 
         list.add(countryElement);
         list.add(cityElement);
-
     }
 
     public GeoManager getGeoManager() {
