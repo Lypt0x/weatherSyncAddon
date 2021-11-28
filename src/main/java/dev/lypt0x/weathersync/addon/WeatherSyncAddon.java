@@ -1,12 +1,13 @@
 package dev.lypt0x.weathersync.addon;
 
+import com.google.common.base.Preconditions;
 import dev.lypt0x.weathersync.listener.WorldListener;
 import dev.lypt0x.weathersync.manager.GeoManager;
 import dev.lypt0x.weathersync.manager.SettingsContainer;
+import dev.lypt0x.weathersync.util.LabyModClass;
 import net.labymod.api.LabyModAddon;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.settings.elements.*;
-import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public final class WeatherSyncAddon extends LabyModAddon {
         this.geoManager.loadGeoData();
 
         this.api.getEventService().registerListener(new WorldListener());
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::saveConfig));
     }
 
     @Override
@@ -39,10 +42,13 @@ public final class WeatherSyncAddon extends LabyModAddon {
 
     @Override
     protected void fillSettings(List<SettingsElement> list) {
-        DropDownMenu<String> country = new DropDownMenu<>("Country", 4, 4, 4, 4);
-        this.geoManager.getCountries().forEach(country::addOption);
+        DropDownMenu<String> countryMenu = new DropDownMenu<>("Country", 4, 4, 4, 4);
+        DropDownMenu<String> cityMenu = new DropDownMenu<>("City", 4, 8, 4, 4);
 
-        DropDownMenu<String> city = new DropDownMenu<>("City", 4, 8, 4, 4);
+        DropDownElement<String> countryElement = new DropDownElement<>("Country", countryMenu);
+        DropDownElement<String> cityElement = new DropDownElement<>("City", cityMenu);
+
+        this.geoManager.getCountries().forEach(countryMenu::addOption);
 
         list.add(
                 new BooleanElement(
@@ -51,21 +57,27 @@ public final class WeatherSyncAddon extends LabyModAddon {
                 )
         );
 
-        DropDownElement<String> countryElement = new DropDownElement<>("Country", country);
-        DropDownElement<String> cityElement = new DropDownElement<>("City", city);
-
-        countryElement.setChangeListener(new Consumer() {
-            @Override
-            public void accept(Object o) {
-                cityElement.getDropDownMenu().clear();
-                String object = (String) o;
-                getGeoManager().getCitiesByCountry((object != null) ? !object.equals("Country") ? object : "Germany" : "Germany")
-                        .forEach(cityElement.getDropDownMenu()::addOption);
-            }
-        });
+        this.applyListener(countryElement, cityElement);
 
         list.add(countryElement);
         list.add(cityElement);
+    }
+
+    private void applyListener(DropDownElement<String> countryElement, DropDownElement<String> cityElement) {
+        countryElement.setChangeListener(country -> {
+            if (country == null) {
+                cityElement.getDropDownMenu().setEnabled(false);
+            } else {
+                cityElement.getDropDownMenu().setEnabled(true);
+                cityElement.getDropDownMenu().clear();
+
+                DropDownMenu<String> cityMenu = LabyModClass.invoke(cityElement, "getDropDownMenu");
+                Preconditions.checkNotNull(cityMenu);
+
+                this.getGeoManager().getCitiesByCountry(country.equals("Country") ? "Germany" : country)
+                        .forEach(cityMenu::addOption);
+            }
+        });
     }
 
     public GeoManager getGeoManager() {

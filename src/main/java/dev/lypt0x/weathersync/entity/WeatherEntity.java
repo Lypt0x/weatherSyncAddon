@@ -14,17 +14,20 @@ import java.util.Optional;
 @JsonIgnoreProperties(value = { "request", "weather", "current_condition" })
 public class WeatherEntity {
 
-    @JsonProperty("nearest_area")
     private List<WeatherNearestArea> nearestAreas;
 
     @JsonIgnore
     private final Sunset sunset;
+
+    @JsonIgnore
     private final ZoneId zoneId;
 
-    public WeatherEntity() {
+    public WeatherEntity(List<WeatherNearestArea> nearestAreas) {
+        this.nearestAreas = nearestAreas;
         this.sunset = new Sunset();
+
         this.sunset.recognizeDate();
-        this.sunset.recognizeTimezoneOffset();
+
         this.zoneId = WeatherSyncAddon.getAddon().getGeoManager().getTimeZoneEngine().query(this.sunset.getLatitude(), this.sunset.getLongitude())
                 .orElse(ZoneId.systemDefault());
         System.out.println("ZoneId: " + this.zoneId.getRules().getOffset(Instant.now()).getTotalSeconds() / 3600.0);
