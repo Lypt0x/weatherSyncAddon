@@ -1,6 +1,10 @@
 {
-  "name": "Example Addon",
   "uuid": "%uuid%",
+  "name": "WeatherSync",
   "mainClass": "dev.lypt0x.weathersync.addon.WeatherSyncAddon",
+  "author": "0xLyptox, BliegenderFesen, xConnorTV",
+  "description": "Change your weather to the weather of your current location",
+  "category": 1,
+  "icon": "https://icons.iconarchive.com/icons/iconsmind/outline/128/Clouds-icon.png",
   "transformerClass": "dev.lypt0x.weathersync.transformer.WeatherAddonTransformer"
 }

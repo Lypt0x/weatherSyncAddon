@@ -28,6 +28,7 @@ version = '1.0.0'
 group = 'dev.lypt0x' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'WeatherSync Addon'
 
+compileJava.options.encoding = 'UTF-8'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 def mcpVersion = [channel: 'snapshot', version: '20201028-1.16.3']
