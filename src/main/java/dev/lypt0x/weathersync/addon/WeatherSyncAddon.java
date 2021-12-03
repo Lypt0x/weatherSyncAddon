@@ -41,7 +41,7 @@ public final class WeatherSyncAddon extends LabyModAddon {
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::saveConfig));
 
-       // Tabs.registerTab("WeatherSync", WeatherSyncScreen.class);
+        // Tabs.registerTab("WeatherSync", WeatherSyncScreen.class);
     }
 
     @Override
@@ -68,19 +68,22 @@ public final class WeatherSyncAddon extends LabyModAddon {
         enableElement.bindDescription("Enable or disable the addon!");
         list.add(enableElement);
 
-        this.applyListener(countryElement, cityElement);
-        list.add(new HeaderElement("§r"));
+        HeaderElement headerElement = new HeaderElement("§r");
+
+        list.add(headerElement);
         list.add(countryElement);
         list.add(cityElement);
-        list.add(new HeaderElement("§r"));
+        list.add(headerElement);
 
+        // TODO: only enable when country is selected
         StringElement searchElement = new StringElement(
                 "Search", this, new ControlElement.IconData(Material.PAPER),
                 "search", "Search");
         searchElement.bindDescription("Search your City by a given name");
-
         list.add(searchElement);
         list.add(applyStringElement(searchElement));
+
+        this.applyListener(countryElement, cityElement);
     }
 
     private HeaderElement applyStringElement(StringElement stringElement) {
@@ -107,6 +110,8 @@ public final class WeatherSyncAddon extends LabyModAddon {
 
                 this.getGeoManager().getCitiesByCountry(country.equals("Country") ? "Germany" : country)
                         .forEach(cityMenu::addOption);
+
+
             }
         });
     }
